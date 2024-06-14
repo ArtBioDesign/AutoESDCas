@@ -1,0 +1,26 @@
+FROM chopchop_env:latest
+
+ARG FUNCTION_DIR="/function/"
+
+COPY ./*  ${FUNCTION_DIR}
+RUN chmod -R 755 ${FUNCTION_DIR}
+
+WORKDIR ${FUNCTION_DIR}
+
+# activate the conda environment
+SHELL ["/bin/bash", "-c"]
+RUN source /opt/conda/bin/activate crispr_hr_editor
+
+# set the default environment to myenv
+RUN echo "source activate crispr_hr_editor" > ~/.bashrc
+
+ENV CONDA_PREFIX=/opt/conda/envs/chopchop/
+
+ENV PATH /opt/conda/envs/crispr_hr_editor/bin:$PATH
+
+ENTRYPOINT [ "/opt/conda/envs/crispr_hr_editor/bin/python", "-m", "awslambdaric" ]
+CMD [ "app.lambda_handler" ]  
+
+
+
+
